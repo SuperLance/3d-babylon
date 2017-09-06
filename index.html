@@ -1,0 +1,46 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>3D model</title>
+    <!-- Babylon.js -->
+    <script src="https://www.babylonjs.com/hand.minified-1.2.js"></script>
+    <script src="https://preview.babylonjs.com/cannon.js"></script>
+    <script src="https://preview.babylonjs.com/oimo.js"></script>
+    <script src="https://preview.babylonjs.com/babylon.js"></script>
+    <script src="https://preview.babylonjs.com/gui/babylon.gui.min.js"></script>
+
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css">
+
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.2.1/jquery.min.js"></script>
+    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js"></script>
+
+    <!-- Custom CSS -->
+    <link href="css/main.css" rel="stylesheet"/>
+</head>
+<body>
+<div id="main-tool">
+    <div id="shared-data" hidden></div>
+
+    <div id="product-area">
+        <canvas id="renderCanvas"></canvas>
+    </div>
+    <div id="setting-area">
+
+        <div id="head-setting">
+            <h3>HEAD COLORS</h3>
+        </div>
+        <div id="arm-setting">
+            <h3>ARM COLORS</h3>
+        </div>
+        <div id="body-setting">
+            <h3>BODY COLORS</h3>
+        </div>
+        <div id="foot-setting">
+            <h3>FOOT COLORS</h3>
+        </div>
+    </div>
+</div>
+<script src="js/render.js"></script>
+<script src="js/setting.js"></script>
+</body>
+</html>
