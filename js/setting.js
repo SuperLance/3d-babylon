@@ -1,17 +1,17 @@
 $(document).ready(function () {
     var interactedData = {
-        'BodyColour': '#4a266d',
-        'ArmsColour': '#FFFFFF',
-        'ArmsType': 0,
-        'FeetColour': '#79c366',
-        'Head-ItemsColour': '#79c366',
-        'Head-ItemsType': 0,
-        'FacesColour': '#fadd4b',
-        'FacesType': 0,
-        'MouthColour': '#79c366',
-        'MouthType': 0,
-        'EyesColour': '#000000',
-        'EyesType': 0
+        'bodyColour': '#4a266d',
+        'armsColour': '#FFFFFF',
+        'armsType': 0,
+        'feetColour': '#79c366',
+        'hornColour': '#79c366',
+        'hornType': 0,
+        'facesColour': '#fadd4b',
+        'facesType': 0,
+        'mouthColour': '#FF0000',
+        'mouthType': 0,
+        'eyesColour': '#FFFFFF',
+        'eyesType': 0
     };
 
     var colorArr = ['#000000', '#ffffff', '#9e9f9f', '#595a5b', '#fbfe00', '#ffe400', '#c38000', '#704a01', '#ffa200',
@@ -51,15 +51,6 @@ $(document).ready(function () {
     settings();
 
     $('#setting-area button').click(function () {
-        // var key = $(this).attr('class');
-        // var color = $(this).attr('data-color');
-        //
-        // interactedData[key] = color;
-        //
-        // var jsonStr = JSON.stringify(interactedData);
-        //
-        // $('#shared-data').attr('data-interactiveconfig', jsonStr);
-
         update3D(interactedData);
     });
 });
