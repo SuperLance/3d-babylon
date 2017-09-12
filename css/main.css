@@ -27,13 +27,13 @@ html, body {
 }
 
 #setting-area {
-    padding: 30px;
     height: 700px;
     background: #505050;
     display: inline-block;
-    position: absolute;
     top: 0px;
-    left: 600px;
+    margin-left: 600px;
+    width: calc(100% - 600px);
+    padding: 200px;
 }
 
 #renderCanvas {
