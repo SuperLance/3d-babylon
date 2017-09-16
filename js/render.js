@@ -1,23 +1,178 @@
-var canvas;
-var engine;
-var scene;
+/*********************************
+ |         Variables              |
+ *********************************/
 
-var materialBody;
-var materialArms;
-var materialFeet;
-var materialHorn;
-var materialFaces;
-var materialMouth;
-var materialEyes;
-var materialWhite;
+/**
+ * Main Variables for babylon
+ */
+var canvas, engine, scene, camera;
 
-//test
-var meshTask;
+/**
+ * Material variables
+ */
+var materialArr = [];
+var materialBottomPane;
+
+/**
+ * Model object variable
+ * @type {Array}
+ */
+var objArr = [];
+var objCount = 9;
+
+/**
+ * Global parameter for integration
+ */
+var jsonObj;
+
+/**
+ * Object Variables
+ */
 var assetsManager;
+var rotationTitleGUI;
+var bottomPane, axisRing;
 
+/*********************************
+ |         Foreign Functions      |
+ *********************************/
+
+/**
+ * Return position array of circle according to radius.
+ * @param radius
+ * @param delta
+ * @returns {Array}
+ */
+var getCirclePos = function (radius, delta) {
+    var posArr = [];
+
+    for (var i = 0; i < 360 - 2 * delta; i++) {
+        posArr[i] = new BABYLON.Vector3(radius * Math.cos(2 * Math.PI * (i + delta) / 360), 0,
+            radius * Math.sin(2 * Math.PI * (i + delta) / 360));
+    }
+
+    return posArr;
+}
+
+/**
+ * Return value according to key from json Object.
+ * @param index
+ * @param type
+ * @returns {string}
+ */
+var getJsonValue = function (index, type) {
+    var result = '';
+
+    if (type == 'color') {
+        switch (index) {
+            case 0:
+                result = jsonObj.bodyColour;
+                break;
+            case 1:
+                result = jsonObj.armsColour;
+                break;
+            case 2:
+                result = jsonObj.feetColour;
+                break
+            case 3:
+                result = jsonObj.hornColour;
+                break;
+            case 4:
+                result = jsonObj.facesColour;
+                break;
+            case 5:
+                result = jsonObj.mouthColour;
+                break;
+            case 6:
+                result = jsonObj.eyesColour;
+                break;
+            default:
+                result = "#ffffff"
+                break;
+        }
+    } else {
+        switch (index) {
+            case 0:
+                result = jsonObj.bodyType;
+            case 1:
+                result = jsonObj.armsType;
+                break;
+            case 2:
+                result = 0;
+                break
+            case 3:
+                result = jsonObj.hornType;
+                break;
+            case 4:
+                result = jsonObj.facesType;
+                break;
+            case 5:
+                result = jsonObj.mouthType;
+                break;
+            case 6:
+                result = jsonObj.eyesType;
+                break;
+            default:
+                result = 0;
+                break;
+        }
+    }
+
+    return result;
+}
+
+/**
+ * Return number of model type.
+ * @param objIndex
+ * @returns {number}
+ */
+var getTypeCount = function (objIndex) {
+    var count = 0;
+    switch (objIndex) {
+        case 0: //body
+            count = 1;
+            break;
+        case 1: //arms
+            count = 1;
+            break;
+        case 2: //feet
+            count = 1;
+            break;
+        case 3: //horn
+            count = 1;
+            break;
+        case 4: //face
+            count = 1;
+            break;
+        case 5: //mouth
+            count = 1;
+            break;
+        case 6: //eyeBrows
+            count = 1;
+            break;
+        case 7: //eyeWhite
+            count = 1;
+            break;
+        case 8: //teeth
+            count = 1;
+            break;
+        default:
+            count = 0;
+            break;
+
+    }
+
+    return count;
+}
+
+/*********************************
+ |         Main Functions         |
+ *********************************/
+
+/**
+ * Init babylon
+ */
 var init = function () {
-
-    canvas = document.getElementById("renderCanvas");
+    canvas = document.getElementById("render-canvas");
     engine = new BABYLON.Engine(canvas, true);
 
     scene = new BABYLON.Scene(engine);
@@ -32,156 +187,155 @@ var init = function () {
     light2.specular = new BABYLON.Color3(0, 0, 0);
 
     //Create an Arc Rotate Camera - aimed negative z this time
-    var camera = new BABYLON.ArcRotateCamera("Camera", -Math.PI / 2, Math.PI * 0.5, 110, BABYLON.Vector3.Zero(), scene);
+    camera = new BABYLON.ArcRotateCamera("Camera", -Math.PI / 2, Math.PI * 0.5, 110, BABYLON.Vector3.Zero(), scene);
     camera.attachControl(canvas, true);
 
     camera.lowerRadiusLimit = camera.upperRadiusLimit = 110;
 
-    //Create materials
-    materialBody = new BABYLON.StandardMaterial("texture1", scene);
-    materialArms = new BABYLON.StandardMaterial("texture2", scene);
-    materialFeet = new BABYLON.StandardMaterial("texture3", scene);
-    materialHorn = new BABYLON.StandardMaterial("texture4", scene);
-    materialFaces = new BABYLON.StandardMaterial("texture5", scene);
-    materialMouth = new BABYLON.StandardMaterial("texture6", scene);
-    materialEyes = new BABYLON.StandardMaterial("texture7", scene);
-    materialWhite = new BABYLON.StandardMaterial("texture8", scene);
+    //Create material
+    for (var i = 0; i < objCount; i++) {
+        materialArr[i] = [];
+        for (var j = 0; j < getTypeCount(i); j++) {
+            materialArr[i][j] = new BABYLON.StandardMaterial("texture-" + i + "-" + j, scene);
+        }
+    }
 };
 
+/**
+ * Init 3D models
+ */
 initModels = function () {
-    var loadingFlag = [];
-
-    for (var i = 0; i < 9; i++) {
-        loadingFlag[i] = 0;
-    }
-
     var parentObj = new BABYLON.Mesh.CreateBox("parentObj", 0.001, scene);
     parentObj.rotation.x = -Math.PI * 0.5;
-    //test
+
     assetsManager = new BABYLON.AssetsManager(scene);
 
-    bodyObj = assetsManager.addMeshTask("body", "", "models/", "body_full.babylon");
-    hornObj = assetsManager.addMeshTask("horn", "", "models/", "horn.babylon");
-    armsObj = assetsManager.addMeshTask("arms", "", "models/", "arms.babylon");
-    feetObj = assetsManager.addMeshTask("feet", "", "models/", "feet.babylon");
-    faceObj = assetsManager.addMeshTask("face", "", "models/", "face.babylon");
-    mouthObj = assetsManager.addMeshTask("mouth", "", "models/", "mouth.babylon");
-    eyeBrowsObj = assetsManager.addMeshTask("eyeBrows", "", "models/", "eye_brows.babylon");
-    eyeWhitesObj = assetsManager.addMeshTask("eyeWhites", "", "models/", "eye_whites.babylon");
-    teethObj = assetsManager.addMeshTask("teeth", "", "models/", "teeth.babylon");
-
-    bodyObj.onSuccess = function (obj) {
-        for (var i = 0; i < obj.loadedMeshes.length; i++) {
-            if (i == 1 || i == 2) continue;
-            obj.loadedMeshes[i].scaling = new BABYLON.Vector3(0.5, 0.5, 0.5);
-            obj.loadedMeshes[i].material = materialBody;
-            obj.loadedMeshes[i].parent = parentObj;
+    //Import mesh files.
+    for (var i = 0; i < objCount; i++) {
+        objArr[i] = [];
+        for (var j = 0; j < getTypeCount(i); j++) {
+            switch (i) {
+                case 0:
+                    objArr[i][j] = assetsManager.addMeshTask("body-" + i + "-" + j, "", "models/", "body_" + j + ".babylon");
+                    break;
+                case 1:
+                    objArr[i][j] = assetsManager.addMeshTask("arms-" + i + "-" + j, "", "models/", "arms_" + j + ".babylon");
+                    break;
+                case 2:
+                    objArr[i][j] = assetsManager.addMeshTask("feet-" + i + "-" + j, "", "models/", "feet_" + j + ".babylon");
+                    break;
+                case 3:
+                    objArr[i][j] = assetsManager.addMeshTask("horn-" + i + "-" + j, "", "models/", "horn_" + j + ".babylon");
+                    break;
+                case 4:
+                    objArr[i][j] = assetsManager.addMeshTask("face-" + i + "-" + j, "", "models/", "face_" + j + ".babylon");
+                    break;
+                case 5:
+                    objArr[i][j] = assetsManager.addMeshTask("mouth-" + i + "-" + j, "", "models/", "mouth_" + j + ".babylon");
+                    break;
+                case 6:
+                    objArr[i][j] = assetsManager.addMeshTask("eye_brows-" + i + "-" + j, "", "models/", "eye_brows_" + j + ".babylon");
+                    break;
+                case 7:
+                    objArr[i][j] = assetsManager.addMeshTask("eye_whites-" + i + "-" + j, "", "models/", "eye_whites_" + j + ".babylon");
+                    break;
+                case 8:
+                    objArr[i][j] = assetsManager.addMeshTask("teeth-" + i + "-" + j, "", "models/", "teeth_" + j + ".babylon");
+                    break;
+                default:
+                    break;
+            }
         }
     }
 
-    hornObj.onSuccess = function (obj) {
-        for (var i = 0; i < obj.loadedMeshes.length; i++) {
-            obj.loadedMeshes[i].material = materialHorn;
-        }
-        obj.loadedMeshes[0].scaling = new BABYLON.Vector3(0.5, 0.5, 0.5);
-        obj.loadedMeshes[0].parent = parentObj;
-    }
+    //Add material to loaded models.
+    for (var i = 0; i < objCount; i++) {
+        for (var j = 0; j < getTypeCount(i); j++) {
+            objArr[i][j].onSuccess = function (obj) {
+                var ii = obj.name.split("-")[1];
+                var jj = obj.name.split("-")[2];
+                if (ii == 0) {
+                    for (var k = 0; k < obj.loadedMeshes.length; k++) {
+                        obj.loadedMeshes[k].material = materialArr[ii][jj];
 
-    armsObj.onSuccess = function (obj) {
-        for (var i = 0; i < obj.loadedMeshes.length; i++) {
-            obj.loadedMeshes[i].scaling = new BABYLON.Vector3(0.5, 0.5, 0.5);
-            obj.loadedMeshes[i].material = materialArms;
-            obj.loadedMeshes[i].parent = parentObj;
-        }
-    }
+                        if (k == 1 || k == 2) continue
 
-    feetObj.onSuccess = function (obj) {
-        for (var i = 0; i < obj.loadedMeshes.length; i++) {
-            obj.loadedMeshes[i].scaling = new BABYLON.Vector3(0.5, 0.5, 0.5);
-            obj.loadedMeshes[i].material = materialFeet;
-            obj.loadedMeshes[i].parent = parentObj;
-        }
-    }
+                        obj.loadedMeshes[k].scaling = new BABYLON.Vector3(0.5, 0.5, 0.5);
+                        obj.loadedMeshes[k].parent = parentObj;
+                    }
+                } else if (ii == 3) {
+                    for (var k = 0; k < obj.loadedMeshes.length; k++) {
+                        obj.loadedMeshes[k].material = materialArr[ii][jj];
+                    }
 
-    faceObj.onSuccess = function (obj) {
-        obj.loadedMeshes[0].scaling = new BABYLON.Vector3(0.5, 0.5, 0.5);
-        obj.loadedMeshes[0].material = materialFaces;
-        obj.loadedMeshes[0].parent = parentObj;
-    }
+                    obj.loadedMeshes[0].scaling = new BABYLON.Vector3(0.5, 0.5, 0.5);
+                    obj.loadedMeshes[0].parent = parentObj;
+                } else if (ii == 4 || ii == 5) {
+                    for (var k = 0; k < obj.loadedMeshes.length; k++) {
+                        obj.loadedMeshes[k].material = materialArr[ii][jj];
+                    }
 
-    mouthObj.onSuccess = function (obj) {
-        obj.loadedMeshes[0].scaling = new BABYLON.Vector3(0.5, 0.5, 0.5);
-        obj.loadedMeshes[0].material = materialMouth;
-        obj.loadedMeshes[0].parent = parentObj;
-    }
-
-    eyeBrowsObj.onSuccess = function (obj) {
-        for (var i = 0; i < obj.loadedMeshes.length; i++) {
-            obj.loadedMeshes[i].scaling = new BABYLON.Vector3(0.5, 0.5, 0.5);
-            obj.loadedMeshes[i].material = materialEyes;
-            obj.loadedMeshes[i].parent = parentObj;
-        }
-    }
-
-    eyeWhitesObj.onSuccess = function (obj) {
-        for (var i = 0; i < obj.loadedMeshes.length; i++) {
-            obj.loadedMeshes[i].scaling = new BABYLON.Vector3(0.5, 0.5, 0.5);
-            obj.loadedMeshes[i].material = materialWhite;
-            obj.loadedMeshes[i].parent = parentObj;
-        }
-    }
-
-    teethObj.onSuccess = function (obj) {
-        for (var i = 0; i < obj.loadedMeshes.length; i++) {
-            obj.loadedMeshes[i].scaling = new BABYLON.Vector3(0.5, 0.5, 0.5);
-            obj.loadedMeshes[i].material = materialWhite;
-            obj.loadedMeshes[i].parent = parentObj;
+                    obj.loadedMeshes[0].scaling = new BABYLON.Vector3(0.5, 0.5, 0.5);
+                    obj.loadedMeshes[0].material = materialArr[ii][jj];
+                    obj.loadedMeshes[0].parent = parentObj;
+                } else {
+                    for (var k = 0; k < obj.loadedMeshes.length; k++) {
+                        obj.loadedMeshes[k].scaling = new BABYLON.Vector3(0.5, 0.5, 0.5);
+                        obj.loadedMeshes[k].material = materialArr[ii][jj];
+                        obj.loadedMeshes[k].parent = parentObj;
+                    }
+                }
+            }
         }
     }
 
     // bottom ring
-    var bottomRing = BABYLON.Mesh.CreateTorus("torus", 75, 0.1, 140, scene, false);
-    bottomRing.addRotation(Math.PI / 2, 0, 0);
-    bottomRing.position.z = -28.18;
-    materialBottomRing = new BABYLON.StandardMaterial("texture9", scene);
-    materialBottomRing.alpha = 1;
-    bottomRing.material = materialBottomRing;
-    bottomRing.parent = parentObj;
+    axisRing = BABYLON.Mesh.CreateLines("axisRing", getCirclePos(37.5, 7), scene);
+    axisRing.position.y = -28.18;
+    axisRing.rotation.y = Math.PI / 2;
+    axisRing.color = new BABYLON.Color3(0, 0, 0);
+    axisRing.alpha = 0.3;
 
     //bottom plane
-    var bottomPane = BABYLON.Mesh.CreateCylinder("cylinder", 0.1, 75, 75, 60, 1, scene, false);
-    bottomPane.addRotation(Math.PI / 2, 0, 0);
-    bottomPane.position.z = -28.18;
+    bottomPane = BABYLON.Mesh.CreateCylinder("cylinder", 0.1, 75, 75, 60, 1, scene, false);
+    bottomPane.position.y = -28.18;
     materialBottomPane = new BABYLON.StandardMaterial("texture10", scene);
     materialBottomPane.alpha = 0.3;
     bottomPane.material = materialBottomPane;
-    bottomPane.parent = parentObj;
 
     // GUI
+    var rotationTitleObj = new BABYLON.Mesh.CreateBox("rotationTitleObj", 0.001, scene);
+    rotationTitleObj.position.x = 38;
+    rotationTitleObj.parent = axisRing;
+
     var advancedTexture = BABYLON.GUI.AdvancedDynamicTexture.CreateFullscreenUI("UI");
 
-    var rect1 = new BABYLON.GUI.Rectangle();
-    rect1.width = 0.2;
-    rect1.height = "40px";
-    rect1.cornerRadius = 0;
-    rect1.color = "Orange";
-    rect1.thickness = 0;
-    rect1.background = "transparent";
-    advancedTexture.addControl(rect1);
-    rect1.linkWithMesh(bottomPane);
-    rect1.linkOffsetY = -28
+    rotationTitleGUI = new BABYLON.GUI.Rectangle();
+    rotationTitleGUI.width = 1;
+    rotationTitleGUI.height = "40px";
+    rotationTitleGUI.cornerRadius = 0;
+    rotationTitleGUI.color = "rgba(0, 0, 0, 1)";
+    rotationTitleGUI.thickness = 0;
+    rotationTitleGUI.background = "transparent";
+    advancedTexture.addControl(rotationTitleGUI);
+    rotationTitleGUI.linkWithMesh(rotationTitleObj);
 
     var label = new BABYLON.GUI.TextBlock();
-    label.text = "";
-    rect1.addControl(label);
+    //label.fontFamily = "Arial";
+    label.text = "360°";
+    label.fontSize = 12;
+    rotationTitleGUI.addControl(label);
 
 }
 
+/**
+ * Set Parameters
+ */
 var update3D = function (interactedData) {
-    var jsonObj;
-
     if (!interactedData) {
         jsonObj = {
+            'bodyColour': '#4a266d',
+            'bodyType': 0,
             'bodyColour': '#4a266d',
             'armsColour': '#FFFFFF',
             'armsType': 0,
@@ -198,22 +352,90 @@ var update3D = function (interactedData) {
     } else {
         jsonObj = interactedData;
     }
-
-    // change material color according to parameter
-    materialBody.diffuseColor = new BABYLON.Color3.FromHexString(jsonObj.bodyColour);
-    materialArms.diffuseColor = new BABYLON.Color3.FromHexString(jsonObj.armsColour);
-    materialFeet.diffuseColor = new BABYLON.Color3.FromHexString(jsonObj.feetColour);
-    materialHorn.diffuseColor = new BABYLON.Color3.FromHexString(jsonObj.hornColour);
-    materialFaces.diffuseColor = new BABYLON.Color3.FromHexString(jsonObj.facesColour);
-    materialMouth.diffuseColor = new BABYLON.Color3.FromHexString(jsonObj.mouthColour);
-    materialEyes.diffuseColor = new BABYLON.Color3.FromHexString(jsonObj.eyesColour);
-    materialWhite.diffuseColor = new BABYLON.Color3.FromHexString('#FFFFFF');
 }
 
-// Resize
-window.addEventListener("resize", function () {
-    engine.resize();
-});
+/*********************************
+ |     Real time Functions       |
+ *********************************/
+
+/**
+ * Change Color and Type of models smoothly
+ */
+var animationModel = function () {
+    for (var i = 0; i < materialArr.length; i++) {
+        var color = new BABYLON.Color3.FromHexString(getJsonValue(i, 'color'));
+        var type = getJsonValue(i, 'type');
+
+        for (var j = 0; j < materialArr[i].length; j++) {
+
+            if (type == j) {
+                materialArr[i][j].alpha = 1;
+            } else {
+                materialArr[i][j].alpha = 0;
+            }
+
+            if (Math.abs(materialArr[i][j].diffuseColor.r - color.r) > 0.02) {
+                if (materialArr[i][j].diffuseColor.r > color.r) {
+                    materialArr[i][j].diffuseColor.r -= 0.01;
+                } else {
+                    materialArr[i][j].diffuseColor.r += 0.01;
+                }
+            }
+
+            if (Math.abs(materialArr[i][j].diffuseColor.g - color.g) > 0.02) {
+                if (materialArr[i][j].diffuseColor.g > color.g) {
+                    materialArr[i][j].diffuseColor.g -= 0.01;
+                } else {
+                    materialArr[i][j].diffuseColor.g += 0.01;
+                }
+            }
+
+            if (Math.abs(materialArr[i][j].diffuseColor.b - color.b) > 0.02) {
+                if (materialArr[i][j].diffuseColor.b > color.r) {
+                    materialArr[i][j].diffuseColor.b -= 0.01;
+                } else {
+                    materialArr[i][j].diffuseColor.b += 0.01;
+                }
+            }
+        }
+    }
+}
+
+/**
+ * Render Circle and 360 word at the bottom of model.
+ */
+var circlePane = function () {
+    axisRing.rotation.y = -camera.alpha;
+
+    if (camera.beta < Math.PI * 1.166 / 2 && camera.beta > Math.PI * 0.834 / 2) {
+        axisRing.alpha = 0.3;
+        materialBottomPane.alpha = 0;
+
+        rotationTitleGUI.color = "rgba(0, 0, 0, 1)";
+    }
+    else {
+        var diffAlpha = Math.abs(Math.PI / 2 - Math.abs(camera.beta)) - Math.PI * 0.166 / 2;
+        var delta = Math.PI * 0.07;
+        var titleOpacity = 1;
+        if (diffAlpha < delta) {
+            axisRing.alpha = 0.3 * (1 - diffAlpha / delta);
+            materialBottomPane.alpha = 0 * (1 - diffAlpha / delta);
+            titleOpacity = 1 - diffAlpha / delta;
+        }
+        else {
+            axisRing.alpha = 0;
+            materialBottomPane.alpha = 0;
+
+            titleOpacity = 1 - diffAlpha / delta;
+        }
+
+        rotationTitleGUI.color = 'rgba(0, 0, 0,' + titleOpacity + ')';
+    }
+}
+
+/*********************************
+ |            START              |
+ *********************************/
 
 init();
 
@@ -221,11 +443,31 @@ initModels();
 
 update3D();
 
+/*********************************
+ |  Functions related to render  |
+ *********************************/
+
+/**
+ * Render after loading.
+ * @param tasks
+ */
 assetsManager.onFinish = function (tasks) {
     engine.runRenderLoop(function () {
+        circlePane();
+        animationModel();
+
         scene.render();
     });
 }
 
-assetsManager.load();
+/**
+ * Re-render when browser is resized
+ */
+window.addEventListener("resize", function () {
+    engine.resize();
+});
 
+/**
+ * Load assets files.
+ */
+assetsManager.load();

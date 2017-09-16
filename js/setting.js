@@ -1,6 +1,7 @@
 $(document).ready(function () {
     var interactedData = {
         'bodyColour': '#4a266d',
+        'bodyType': 0,
         'armsColour': '#FFFFFF',
         'armsType': 0,
         'feetColour': '#79c366',
