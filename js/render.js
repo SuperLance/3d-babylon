@@ -93,6 +93,7 @@ var getJsonValue = function (index, type) {
         switch (index) {
             case 0:
                 result = jsonObj.bodyType;
+                break;
             case 1:
                 result = jsonObj.armsType;
                 break;
@@ -132,7 +133,7 @@ var getTypeCount = function (objIndex) {
             count = 1;
             break;
         case 1: //arms
-            count = 1;
+            count = 2;
             break;
         case 2: //feet
             count = 1;
@@ -278,7 +279,14 @@ initModels = function () {
                     obj.loadedMeshes[0].scaling = new BABYLON.Vector3(0.5, 0.5, 0.5);
                     obj.loadedMeshes[0].material = materialArr[ii][jj];
                     obj.loadedMeshes[0].parent = parentObj;
-                } else {
+                } else if (ii == 1 && jj == 1) {
+                    for (var k = 0; k < obj.loadedMeshes.length; k++) {
+                        obj.loadedMeshes[k].scaling = new BABYLON.Vector3(0.5, 0.6, 0.6);
+                        obj.loadedMeshes[k].material = materialArr[ii][jj];
+                        obj.loadedMeshes[k].parent = parentObj;
+                    }
+                }
+                else {
                     for (var k = 0; k < obj.loadedMeshes.length; k++) {
                         obj.loadedMeshes[k].scaling = new BABYLON.Vector3(0.5, 0.5, 0.5);
                         obj.loadedMeshes[k].material = materialArr[ii][jj];

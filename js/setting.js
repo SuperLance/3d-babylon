@@ -3,7 +3,7 @@ $(document).ready(function () {
         'bodyColour': '#4a266d',
         'bodyType': 0,
         'armsColour': '#FFFFFF',
-        'armsType': 0,
+        'armsType': 1,
         'feetColour': '#79c366',
         'hornColour': '#79c366',
         'hornType': 0,
@@ -15,7 +15,10 @@ $(document).ready(function () {
         'eyesType': 0
     };
 
+    var armsType = 0;
+
     var setColors = function() {
+        armsType = (armsType + 1) % 2;
         interactedData.bodyColour = '#'+(Math.random()*0xFFFFFF<<0).toString(16);
         interactedData.armsColour = '#'+(Math.random()*0xFFFFFF<<0).toString(16);
         interactedData.feetColour = '#'+(Math.random()*0xFFFFFF<<0).toString(16);
@@ -23,6 +26,7 @@ $(document).ready(function () {
         interactedData.facesColour = '#'+(Math.random()*0xFFFFFF<<0).toString(16);
         interactedData.mouthColour = '#'+(Math.random()*0xFFFFFF<<0).toString(16);
         interactedData.eyesColour = '#'+(Math.random()*0xFFFFFF<<0).toString(16);
+        interactedData.armsType = armsType;
     }
 
     $('#setting-area button').click(function () {
