@@ -8,7 +8,6 @@ $(document).ready(function () {
         'hornColour': '#79c366',
         'hornType': 0,
         'facesColour': '#fadd4b',
-        'facesType': 0,
         'mouthColour': '#FF0000',
         'mouthType': 0,
         'eyesColour': '#FFFFFF',
@@ -16,17 +15,32 @@ $(document).ready(function () {
     };
 
     var armsType = 0;
+    var bodyType = 0;
+    var hornType = 0;
+    var mouthType = 0;
+    var teethType = 0;
+    var eyesType = 0;
 
     var setColors = function() {
-        armsType = (armsType + 1) % 2;
-        interactedData.bodyColour = '#'+(Math.random()*0xFFFFFF<<0).toString(16);
+        armsType = (armsType + 1) % 3;
+        bodyType = (bodyType + 1) % 2;
+        hornType = (hornType + 1) % 4;
+        mouthType = (mouthType + 1) % 3;
+        teethType = (teethType + 1) % 2;
+        eyesType = (eyesType + 1) % 3;
+        interactedData.bodyColour = '#c8102e';//'#'+(Math.random()*0xFFFFFF<<0).toString(16);
         interactedData.armsColour = '#'+(Math.random()*0xFFFFFF<<0).toString(16);
         interactedData.feetColour = '#'+(Math.random()*0xFFFFFF<<0).toString(16);
         interactedData.hornColour = '#'+(Math.random()*0xFFFFFF<<0).toString(16);
         interactedData.facesColour = '#'+(Math.random()*0xFFFFFF<<0).toString(16);
         interactedData.mouthColour = '#'+(Math.random()*0xFFFFFF<<0).toString(16);
         interactedData.eyesColour = '#'+(Math.random()*0xFFFFFF<<0).toString(16);
+        interactedData.hornType = hornType;
+        interactedData.bodyType = bodyType;
         interactedData.armsType = armsType;
+        interactedData.mouthType = mouthType;
+        interactedData.teethType = teethType;
+        interactedData.eyesType = eyesType;
     }
 
     $('#setting-area button').click(function () {

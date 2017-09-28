@@ -18,7 +18,12 @@ var materialBottomPane;
  * @type {Array}
  */
 var objArr = [];
-var objCount = 9;
+
+/**
+ * static variables
+ */
+var objCount = 11;
+var deltaColor = 0.02;
 
 /**
  * Global parameter for integration
@@ -83,10 +88,22 @@ var getJsonValue = function (index, type) {
                 result = jsonObj.mouthColour;
                 break;
             case 6:
+                result = "#ffffff";
+                break;
+            case 7:
                 result = jsonObj.eyesColour;
                 break;
+            case 8:
+                result = "#ffffff";
+                break;
+            case 9:
+                result = jsonObj.eyesColour;
+                break;
+            case 10:
+                result = "#000000";
+                break;
             default:
-                result = "#ffffff"
+                result = "#ffffff";
                 break;
         }
     } else {
@@ -110,6 +127,18 @@ var getJsonValue = function (index, type) {
                 result = jsonObj.mouthType;
                 break;
             case 6:
+                result = jsonObj.mouthType;
+                break;
+            case 7:
+                result = jsonObj.eyesType;
+                break;
+            case 8:
+                result = jsonObj.eyesType;
+                break;
+            case 9:
+                result = jsonObj.eyesType;
+                break;
+            case 10:
                 result = jsonObj.eyesType;
                 break;
             default:
@@ -130,31 +159,37 @@ var getTypeCount = function (objIndex) {
     var count = 0;
     switch (objIndex) {
         case 0: //body
-            count = 1;
+            count = 2;
             break;
         case 1: //arms
-            count = 2;
+            count = 3;
             break;
         case 2: //feet
             count = 1;
             break;
         case 3: //horn
-            count = 1;
+            count = 4;
             break;
         case 4: //face
-            count = 1;
+            count = 18;
             break;
         case 5: //mouth
-            count = 1;
+            count = 3;
             break;
-        case 6: //eyeBrows
-            count = 1;
+        case 6: //teeth
+            count = 3;
             break;
-        case 7: //eyeWhite
-            count = 1;
+        case 7: //eyeBrows
+            count = 3;
             break;
-        case 8: //teeth
-            count = 1;
+        case 8: //eyeWhites
+            count = 3;
+            break;
+        case 9: //eyeColors
+            count = 3;
+            break;
+        case 10: //eyePupils
+            count = 3;
             break;
         default:
             count = 0;
@@ -235,13 +270,19 @@ initModels = function () {
                     objArr[i][j] = assetsManager.addMeshTask("mouth-" + i + "-" + j, "", "models/", "mouth_" + j + ".babylon");
                     break;
                 case 6:
-                    objArr[i][j] = assetsManager.addMeshTask("eye_brows-" + i + "-" + j, "", "models/", "eye_brows_" + j + ".babylon");
+                    objArr[i][j] = assetsManager.addMeshTask("teeth-" + i + "-" + j, "", "models/", "teeth_" + j + ".babylon");
                     break;
                 case 7:
-                    objArr[i][j] = assetsManager.addMeshTask("eye_whites-" + i + "-" + j, "", "models/", "eye_whites_" + j + ".babylon");
+                    objArr[i][j] = assetsManager.addMeshTask("eye_brows-" + i + "-" + j, "", "models/", "eye_brows_" + j + ".babylon");
                     break;
                 case 8:
-                    objArr[i][j] = assetsManager.addMeshTask("teeth-" + i + "-" + j, "", "models/", "teeth_" + j + ".babylon");
+                    objArr[i][j] = assetsManager.addMeshTask("eye_whites-" + i + "-" + j, "", "models/", "eye_whites_" + j + ".babylon");
+                    break;
+                case 9:
+                    objArr[i][j] = assetsManager.addMeshTask("eye_colors-" + i + "-" + j, "", "models/", "eye_colors_" + j + ".babylon");
+                    break;
+                case 10:
+                    objArr[i][j] = assetsManager.addMeshTask("eye_pupils-" + i + "-" + j, "", "models/", "eye_pupils_" + j + ".babylon");
                     break;
                 default:
                     break;
@@ -263,10 +304,12 @@ initModels = function () {
 
                         obj.loadedMeshes[k].scaling = new BABYLON.Vector3(0.5, 0.5, 0.5);
                         obj.loadedMeshes[k].parent = parentObj;
+                        obj.loadedMeshes[k].position.z = -29;
                     }
                 } else if (ii == 3) {
                     for (var k = 0; k < obj.loadedMeshes.length; k++) {
                         obj.loadedMeshes[k].material = materialArr[ii][jj];
+                        obj.loadedMeshes[k].position.z = -29;
                     }
 
                     obj.loadedMeshes[0].scaling = new BABYLON.Vector3(0.5, 0.5, 0.5);
@@ -274,23 +317,18 @@ initModels = function () {
                 } else if (ii == 4 || ii == 5) {
                     for (var k = 0; k < obj.loadedMeshes.length; k++) {
                         obj.loadedMeshes[k].material = materialArr[ii][jj];
+                        obj.loadedMeshes[k].position.z = -29;
                     }
 
                     obj.loadedMeshes[0].scaling = new BABYLON.Vector3(0.5, 0.5, 0.5);
                     obj.loadedMeshes[0].material = materialArr[ii][jj];
                     obj.loadedMeshes[0].parent = parentObj;
-                } else if (ii == 1 && jj == 1) {
-                    for (var k = 0; k < obj.loadedMeshes.length; k++) {
-                        obj.loadedMeshes[k].scaling = new BABYLON.Vector3(0.5, 0.6, 0.6);
-                        obj.loadedMeshes[k].material = materialArr[ii][jj];
-                        obj.loadedMeshes[k].parent = parentObj;
-                    }
-                }
-                else {
+                } else {
                     for (var k = 0; k < obj.loadedMeshes.length; k++) {
                         obj.loadedMeshes[k].scaling = new BABYLON.Vector3(0.5, 0.5, 0.5);
                         obj.loadedMeshes[k].material = materialArr[ii][jj];
                         obj.loadedMeshes[k].parent = parentObj;
+                        obj.loadedMeshes[k].position.z = -29;
                     }
                 }
             }
@@ -360,6 +398,8 @@ var update3D = function (interactedData) {
     } else {
         jsonObj = interactedData;
     }
+
+    jsonObj.facesType = 9 * jsonObj.bodyType + 3 * jsonObj.eyesType + jsonObj.mouthType;
 }
 
 /*********************************
@@ -372,10 +412,10 @@ var update3D = function (interactedData) {
 var animationModel = function () {
     for (var i = 0; i < materialArr.length; i++) {
         var color = new BABYLON.Color3.FromHexString(getJsonValue(i, 'color'));
+
         var type = getJsonValue(i, 'type');
 
         for (var j = 0; j < materialArr[i].length; j++) {
-
             if (type == j) {
                 materialArr[i][j].alpha = 1;
             } else {
@@ -384,25 +424,34 @@ var animationModel = function () {
 
             if (Math.abs(materialArr[i][j].diffuseColor.r - color.r) > 0.02) {
                 if (materialArr[i][j].diffuseColor.r > color.r) {
-                    materialArr[i][j].diffuseColor.r -= 0.01;
+                    materialArr[i][j].diffuseColor.r -= deltaColor;
                 } else {
-                    materialArr[i][j].diffuseColor.r += 0.01;
+                    materialArr[i][j].diffuseColor.r += deltaColor;
                 }
+            } else {
+                materialArr[i][j].diffuseColor.r = color.r;
             }
+
 
             if (Math.abs(materialArr[i][j].diffuseColor.g - color.g) > 0.02) {
                 if (materialArr[i][j].diffuseColor.g > color.g) {
-                    materialArr[i][j].diffuseColor.g -= 0.01;
+                    materialArr[i][j].diffuseColor.g -= deltaColor;
                 } else {
-                    materialArr[i][j].diffuseColor.g += 0.01;
+                    materialArr[i][j].diffuseColor.g += deltaColor;
                 }
+            } else {
+                materialArr[i][j].diffuseColor.g = color.g;
             }
 
-            if (Math.abs(materialArr[i][j].diffuseColor.b - color.b) > 0.02) {
-                if (materialArr[i][j].diffuseColor.b > color.r) {
-                    materialArr[i][j].diffuseColor.b -= 0.01;
+            if (Math.abs(materialArr[i][j].diffuseColor.b - color.b) > 0.03) {
+                if (materialArr[i][j].diffuseColor.b > color.b) {
+                    materialArr[i][j].diffuseColor.b -= deltaColor;
                 } else {
-                    materialArr[i][j].diffuseColor.b += 0.01;
+                    materialArr[i][j].diffuseColor.b += deltaColor;
+                }
+            } else {
+                if(i == 0) {
+                    materialArr[i][j].diffuseColor.b = color.b;
                 }
             }
         }
