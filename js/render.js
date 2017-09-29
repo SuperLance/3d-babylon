@@ -513,6 +513,7 @@ update3D();
  * @param tasks
  */
 assetsManager.onFinish = function (tasks) {
+    //Disable if models are loaded.
     $("#progress-bar").css('display', 'none');
 
     engine.runRenderLoop(function () {
@@ -534,11 +535,17 @@ window.addEventListener("resize", function () {
  * Load assets files.
  */
 assetsManager.useDefaultLoadingScreen = false;
-//engine.loadingUIBackgroundColor = "transparent";
-//engine.loadingUIText = "text";
 
+//Count loaded models.
 setInterval(function () {
-    $("#progress-bar").css('width', ""+(loadedCount * 100/ 45)+"%");
+    var totalCount = 0;
+
+    for(var i = 0; i < objCount; i++) {
+        totalCount += getTypeCount(i);
+    }
+
+    $("#progress-bar").css('width', ""+(loadedCount * 100/ totalCount)+"%");
+
 }, 100);
 
 assetsManager.load();
