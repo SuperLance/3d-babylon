@@ -40,3 +40,14 @@ html, body {
     height: 100%;
     touch-action: none;
 }
+
+#product-progress {
+    width: 100%;
+    background-color: #ddd;
+}
+
+#progress-bar {
+    width: 1%;
+    height: 30px;
+    background-color: #4CAF50;
+}

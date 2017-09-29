@@ -24,6 +24,7 @@ var objArr = [];
  */
 var objCount = 11;
 var deltaColor = 0.02;
+var loadedCount = 0;
 
 /**
  * Global parameter for integration
@@ -212,6 +213,7 @@ var init = function () {
     engine = new BABYLON.Engine(canvas, true);
 
     scene = new BABYLON.Scene(engine);
+
     // Set scene background color
     scene.clearColor = new BABYLON.Color4(0, 0, 0, 0.0000000000000001);
 
@@ -294,6 +296,8 @@ initModels = function () {
     for (var i = 0; i < objCount; i++) {
         for (var j = 0; j < getTypeCount(i); j++) {
             objArr[i][j].onSuccess = function (obj) {
+                loadedCount++;
+
                 var ii = obj.name.split("-")[1];
                 var jj = obj.name.split("-")[2];
                 if (ii == 0) {
@@ -509,6 +513,8 @@ update3D();
  * @param tasks
  */
 assetsManager.onFinish = function (tasks) {
+    $("#progress-bar").css('display', 'none');
+
     engine.runRenderLoop(function () {
         circlePane();
         animationModel();
@@ -527,4 +533,12 @@ window.addEventListener("resize", function () {
 /**
  * Load assets files.
  */
+assetsManager.useDefaultLoadingScreen = false;
+//engine.loadingUIBackgroundColor = "transparent";
+//engine.loadingUIText = "text";
+
+setInterval(function () {
+    $("#progress-bar").css('width', ""+(loadedCount * 100/ 45)+"%");
+}, 100);
+
 assetsManager.load();
