@@ -218,15 +218,17 @@ var init = function () {
     scene.clearColor = new BABYLON.Color4(0, 0, 0, 0.0000000000000001);
 
     //Create a light
-    var light1 = new BABYLON.DirectionalLight("DirectionalLight1", new BABYLON.Vector3(60, 60, 60), scene);
+    var light1 = new BABYLON.PointLight("DirectionalLight1", new BABYLON.Vector3(20, 20, 100), scene);
     light1.specular = new BABYLON.Color3(0, 0, 0);
-
-    var light2 = new BABYLON.DirectionalLight("DirectionalLight2", new BABYLON.Vector3(-60, -60, -60), scene);
-    light2.specular = new BABYLON.Color3(0, 0, 0);
 
     //Create an Arc Rotate Camera - aimed negative z this time
     camera = new BABYLON.ArcRotateCamera("Camera", -Math.PI / 2, Math.PI * 0.5, 110, BABYLON.Vector3.Zero(), scene);
     camera.attachControl(canvas, true);
+
+    // Move the light with the camera
+    scene.registerBeforeRender(function () {
+        light1.position = camera.position;
+    });
 
     camera.lowerRadiusLimit = camera.upperRadiusLimit = 110;
 
