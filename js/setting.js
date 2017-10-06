@@ -11,6 +11,7 @@ $(document).ready(function () {
         'mouthColour': '#FF0000',
         'mouthType': 0,
         'eyesColour': '#FFFFFF',
+        'eyeBrowColour': '#000000',
         'eyesType': 0
     };
 
@@ -23,11 +24,11 @@ $(document).ready(function () {
 
     var setColors = function() {
         armsType = (armsType + 1) % 3;
-        bodyType = (bodyType + 1) % 2;
+        bodyType = (bodyType + 1) % 3;
         hornType = (hornType + 1) % 4;
-        mouthType = (mouthType + 1) % 3;
+        mouthType = Math.floor(Math.random() * 10) % 3;
         teethType = (teethType + 1) % 2;
-        eyesType = (eyesType + 1) % 3;
+        eyesType = Math.floor(Math.random() * 10) % 3;
         interactedData.bodyColour = '#c8102e';//'#'+(Math.random()*0xFFFFFF<<0).toString(16);
         interactedData.armsColour = '#'+(Math.random()*0xFFFFFF<<0).toString(16);
         interactedData.feetColour = '#'+(Math.random()*0xFFFFFF<<0).toString(16);
@@ -35,6 +36,7 @@ $(document).ready(function () {
         interactedData.facesColour = '#'+(Math.random()*0xFFFFFF<<0).toString(16);
         interactedData.mouthColour = '#'+(Math.random()*0xFFFFFF<<0).toString(16);
         interactedData.eyesColour = '#'+(Math.random()*0xFFFFFF<<0).toString(16);
+        interactedData.eyeBrowColour = '#'+(Math.random()*0xFFFFFF<<0).toString(16);
         interactedData.hornType = hornType;
         interactedData.bodyType = bodyType;
         interactedData.armsType = armsType;

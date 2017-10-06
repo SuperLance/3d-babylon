@@ -92,7 +92,7 @@ var getJsonValue = function (index, type) {
                 result = "#ffffff";
                 break;
             case 7:
-                result = jsonObj.eyesColour;
+                result = jsonObj.eyeBrowColour;
                 break;
             case 8:
                 result = "#ffffff";
@@ -160,7 +160,7 @@ var getTypeCount = function (objIndex) {
     var count = 0;
     switch (objIndex) {
         case 0: //body
-            count = 2;
+            count = 11;
             break;
         case 1: //arms
             count = 3;
@@ -375,6 +375,7 @@ initModels = function () {
     var label = new BABYLON.GUI.TextBlock();
     //label.fontFamily = "Arial";
     label.text = "360°";
+    label.color = "#000000";
     label.fontSize = 12;
     rotationTitleGUI.addControl(label);
 
@@ -399,13 +400,20 @@ var update3D = function (interactedData) {
             'mouthColour': '#79c366',
             'mouthType': 0,
             'eyesColour': '#000000',
+            'eyeBrowColour': '#000000',
             'eyesType': 0
         }
     } else {
         jsonObj = interactedData;
     }
 
-    jsonObj.facesType = 9 * jsonObj.bodyType + 3 * jsonObj.eyesType + jsonObj.mouthType;
+    if(jsonObj.bodyType >= 2) {
+        jsonObj.facesType = -1;
+        jsonObj.bodyType = 3 * jsonObj.eyesType + jsonObj.mouthType + 2;
+    } else {
+        jsonObj.facesType = 9 * jsonObj.bodyType + 3 * jsonObj.eyesType + jsonObj.mouthType;
+    }
+
 }
 
 /*********************************
@@ -474,7 +482,7 @@ var circlePane = function () {
         axisRing.alpha = 0.3;
         materialBottomPane.alpha = 0;
 
-        rotationTitleGUI.color = "rgba(0, 0, 0, 1)";
+        rotationTitleGUI.alpha = 1;
     }
     else {
         var diffAlpha = Math.abs(Math.PI / 2 - Math.abs(camera.beta)) - Math.PI * 0.166 / 2;
@@ -492,7 +500,9 @@ var circlePane = function () {
             titleOpacity = 1 - diffAlpha / delta;
         }
 
-        rotationTitleGUI.color = 'rgba(0, 0, 0,' + titleOpacity + ')';
+        if(titleOpacity < 0) titleOpacity = 0;
+
+        rotationTitleGUI.alpha = titleOpacity;
     }
 }
 
